@@ -14,5 +14,108 @@
             The  web application  will  provide  users  with  access  to  information  about  different  
             movies,   directors,   and  genres.  Users  will  be  able  to  sign  up,   update  their  
             personal  information,   and  create  a  list  of  their  favorite  movies.  </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Request</th>
+                        <th>URL</th>
+                        <th>Response</th>
+                        <th>Description</th> <th>Query Parameters</th> <th>Request Body</th> <th>Response Body</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GET</td>
+                        <td>/movies</td>
+                        <td>200 OK</td>
+                        <td>Returns a list of all movies</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>JSON array of movie objects</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/movies/:title</td>
+                        <td>200 OK or 404 Not Found</td>
+                        <td>Returns data about a single movie by title</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>JSON object of movie data</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/users</td>
+                        <td>200 OK</td>
+                        <td>Returns data on all the users</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>JSON array of user objects</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/users/:id</td>
+                        <td>200 OK</td>
+                        <td>Returns data for a user by ID</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>JSON object of user data</td>
+                    </tr>
+                    <tr>
+                        <td>POST</td>
+                        <td>/users</td>
+                        <td>201 Created</td>
+                        <td>Registers a new user</td>
+                        <td>None</td>
+                        <td>JSON object of user data</td>
+                        <td>JSON object of created user</td>
+                    </tr>
+                    <tr>
+                        <td>PUT</td>
+                        <td>/users/:id</td>
+                        <td>200 OK</td>
+                        <td>Updates user information</td>
+                        <td>None</td>
+                        <td>JSON object of updated user data</td>
+                        <td>JSON object of updated user data</td>
+                    </tr>
+                    <tr>
+                        <td>DELETE</td>
+                        <td>/users/:id</td>
+                        <td>200 OK</td>
+                        <td>Deletes a user</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>Success message</td>
+                    </tr>
+                    <tr>
+                        <td>POST</td>
+                        <td>/users/:id/favorites/:movieId</td>
+                        <td>201 Created</td>
+                        <td>Adds a movie to user's favorites</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>Success message</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/users/:id/favorites</td>
+                        <td>200 OK</td>
+                        <td>Returns user's favorite movies</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>JSON array of movie objects</td>
+                    </tr>
+                    <tr>
+                        <td>DELETE</td>
+                        <td>/users/:id/favorites/:movieId</td>
+                        <td>200 OK</td>
+                        <td>Removes a movie from user's favorites</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>Success message</td>
+                    </tr>
+                </tbody>
+            </table>
     </body>
 </html>
