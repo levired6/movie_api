@@ -15,107 +15,268 @@
             movies,   directors,   and  genres.  Users  will  be  able  to  sign  up,   update  their  
             personal  information,   and  create  a  list  of  their  favorite  movies.  </p>
 
+            <title>Movie API Documentation</title>
+            <style>
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+        
+                th, td {
+                    border: 1px solid black;
+                    padding: 8px;
+                    text-align: left;
+                }
+        
+                th {
+                    background-color: #f2f2f2;
+                }
+            </style>
+        </head>
+        <body>
+        
+            <h1>Movie API Documentation</h1>
+        
             <table>
                 <thead>
                     <tr>
                         <th>Request</th>
                         <th>URL</th>
                         <th>Response</th>
-                        <th>Description</th> <th>Query Parameters</th> <th>Request Body</th> <th>Response Body</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>GET</td>
+                        <td>/</td>
+                        <td>Welcome message</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
                         <td>/movies</td>
-                        <td>200 OK</td>
-                        <td>Returns a list of all movies</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON array of movie objects</td>
+                        <td>List of all movies (JSON)</td>
                     </tr>
                     <tr>
                         <td>GET</td>
                         <td>/movies/:title</td>
-                        <td>200 OK or 404 Not Found</td>
-                        <td>Returns data about a single movie by title</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON object of movie data</td>
+                        <td>Data about a single movie by title (JSON)</td>
                     </tr>
                     <tr>
                         <td>GET</td>
-                        <td>/users</td>
-                        <td>200 OK</td>
-                        <td>Returns data on all the users</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON array of user objects</td>
+                        <td>/movies/genre/:genreName</td>
+                        <td>Data about a genre by name (JSON)</td>
                     </tr>
                     <tr>
                         <td>GET</td>
-                        <td>/users/:id</td>
-                        <td>200 OK</td>
-                        <td>Returns data for a user by ID</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON object of user data</td>
+                        <td>/movies/directorName/:directorName</td>
+                        <td>Data about a director by name (JSON)</td>
                     </tr>
                     <tr>
                         <td>POST</td>
                         <td>/users</td>
-                        <td>201 Created</td>
-                        <td>Registers a new user</td>
-                        <td>None</td>
-                        <td>JSON object of user data</td>
-                        <td>JSON object of created user</td>
+                        <td>Registers a new user (JSON)</td>
                     </tr>
                     <tr>
                         <td>PUT</td>
                         <td>/users/:id</td>
-                        <td>200 OK</td>
-                        <td>Updates user information</td>
-                        <td>None</td>
-                        <td>JSON object of updated user data</td>
-                        <td>JSON object of updated user data</td>
+                        <td>Updates user info (username) (JSON)</td>
+                    </tr>
+                    <tr>
+                        <td>POST</td>
+                        <td>/users/:id/:movieTitle</td>
+                        <td>Adds a movie to user's favorites (text)</td>
+                    </tr>
+                    <tr>
+                        <td>DELETE</td>
+                        <td>/users/:id/:movieTitle</td>
+                        <td>Removes a movie from user's favorites (text)</td>
                     </tr>
                     <tr>
                         <td>DELETE</td>
                         <td>/users/:id</td>
-                        <td>200 OK</td>
-                        <td>Deletes a user</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>Success message</td>
-                    </tr>
-                    <tr>
-                        <td>POST</td>
-                        <td>/users/:id/favorites/:movieId</td>
-                        <td>201 Created</td>
-                        <td>Adds a movie to user's favorites</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>Success message</td>
-                    </tr>
-                    <tr>
-                        <td>GET</td>
-                        <td>/users/:id/favorites</td>
-                        <td>200 OK</td>
-                        <td>Returns user's favorite movies</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON array of movie objects</td>
-                    </tr>
-                    <tr>
-                        <td>DELETE</td>
-                        <td>/users/:id/favorites/:movieId</td>
-                        <td>200 OK</td>
-                        <td>Removes a movie from user's favorites</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>Success message</td>
+                        <td>Deregisters a user (text)</td>
                     </tr>
                 </tbody>
             </table>
+        
+            <h2>Endpoint Details</h2>
+        
+            <h3>Welcome Message</h3>
+            <p>Returns a welcome message.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/</code></li>
+                <li><strong>Method:</strong> <code>GET</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> Text message. Example:
+                    <pre>
+        Welcome to myFlix app! Here are the top 10 2025 Oscar nomonated movies!
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Get All Movies</h3>
+            <p>Returns a list of all movies.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/movies</code></li>
+                <li><strong>Method:</strong> <code>GET</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> JSON array of movie objects. Example:
+                    <pre>
+        [
+            {
+                "title": "Anora",
+                "discription": "...",
+                "genre": "Comedy, Drama, Romance",
+                "director": "Sean Baker",
+                "imageURL": "images/Anora.jpg"
+            },
+            // ... more movies
+        ]
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Get Movie by Title</h3>
+            <p>Returns data about a single movie by title.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/movies/:title</code></li>
+                <li><strong>Method:</strong> <code>GET</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> JSON object of the movie data. Example:
+                    <pre>
+        {
+            "title": "Anora",
+            "discription": "...",
+            "genre": "Comedy, Drama, Romance",
+            "director": "Sean Baker",
+            "imageURL": "images/Anora.jpg"
+        }
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Get Genre by Name</h3>
+            <p>Returns data about a genre by name.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/movies/genre/:genreName</code></li>
+                <li><strong>Method:</strong> <code>GET</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> JSON object of the genre data.  All movie objects have genre objects with a Genre Description property. Example:
+                    <pre>
+        {
+            "Name": "Anora",
+            "Genre": "Comedy, Drama, Romance"
+        }
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Get Director by Name</h3>
+            <p>Returns data about a director by name.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/movies/directorName/:directorName</code></li>
+                <li><strong>Method:</strong> <code>GET</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> JSON object of the director data. Movie objects have director objects with a directors Name. Example:
+                    <pre>
+        {
+            "Name": "Sean Baker"
+        }
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Register New User</h3>
+            <p>Registers a new user.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/users</code></li>
+                <li><strong>Method:</strong> <code>POST</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> JSON object with user data. Example:
+                    <pre>
+        {
+            "name": "New User"
+        }
+                    </pre>
+                </li>
+                <li><strong>Response:</strong> JSON object of the newly created user (including the generated ID). Example:
+                    <pre>
+        {
+            "id": "generated-uuid",
+            "name": "New User"
+        }
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Update User Info</h3>
+            <p>Updates user information (currently only username).</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/users/:id</code></li>
+                <li><strong>Method:</strong> <code>PUT</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> JSON object with updated user data. Example:
+                    <pre>
+        {
+            "name": "Updated User Name"
+        }
+                    </pre>
+                </li>
+                <li><strong>Response:</strong> JSON object of the updated user data. Example:
+                    <pre>
+        {
+            "id": "user-id",
+            "name": "Updated User Name"
+        }
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Add Movie to Favorites</h3>
+            <p>Adds a movie to a user's list of favorites.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
+                <li><strong>Method:</strong> <code>POST</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> Text message indicating success. Example:
+                    <pre>
+        "Movie Title has been added to user user-id's list of favorites"
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Remove Movie from Favorites</h3>
+            <p>Removes a movie from a user's list of favorites.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/users/:id/:movieTitle</code></li>
+                <li><strong>Method:</strong> <code>DELETE</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> Text message indicating success. Example:
+                    <pre>
+        "Movie Title has been removed from user user-id's list of favorites"
+                    </pre>
+                </li>
+            </ul>
+        
+            <h3>Deregister User</h3>
+            <p>Deregisters a user.</p>
+            <ul>
+                <li><strong>URL:</strong> <code>/users/:id</code></li>
+                <li><strong>Method:</strong> <code>DELETE</code></li>
+                <li><strong>Query Parameters:</strong> None</li>
+                <li><strong>Request Body:</strong> None</li>
+                <li><strong>Response:</strong> Text message indicating success. Example:
+                    <pre>
+        "user user-id has been deleted"
+                    </pre>
+                </li>
+            </ul>
     </body>
 </html>

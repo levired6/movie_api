@@ -1,24 +1,16 @@
 {
   "name": "movie_api",
   "version": "1.0.0",
-  "description": "myFlix API project",
+  "description": "myFlix API",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/levired6/movie_api.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/levired6/movie_api/issues"
-  },
-  "homepage": "https://github.com/levired6/movie_api#readme",
   "dependencies": {
     "body-parser": "^1.20.3",
     "express": "^4.21.2",
@@ -26,6 +18,6 @@
     "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "eslint": "^9.19.0"
+    "nodemon": "^3.1.7"
   }
 }
