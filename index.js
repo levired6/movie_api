@@ -180,31 +180,28 @@ let users = [
     });
   });
 
-//Add a user Create
+  // Add a user (Create)
 app.post('/users', async (req, res) => {
-  await Users.findOne({username: req.body.username})
-  .then((user) => {
-    if (user) {
-      return res.status(400).send(req.body.username + 'already exists');
-    }else {
-      Users
-      .create({
-        username: req.body.username,
-        password: req.body.password,
-        email: req.body.email,
-        birthday: req.body.birthday
-      })
-      .then((user) => {res.status(201).json(user)})
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send('Error:' + error);
-      })
-    }
-})
-.catch((error) => {
-  console.error(error);
-  res.status(500).send('Error:' + error);
-    });
+  try {
+      const existingUser = await Users.findOne({ username: req.body.username });
+
+      if (existingUser) {
+          return res.status(400).send(req.body.username + ' already exists');
+      }
+
+      const newUser = await Users.create({
+          username: req.body.username,
+          password: req.body.password, // Store hashed password
+          email: req.body.email,
+          birthday: req.body.birthday
+      });
+
+      res.status(201).json({newUser});
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error creating user: ' + error.message); // More specific error message
+  }
 });
 
 //Get all users
@@ -233,40 +230,62 @@ app.get('/users/:Username', async (req, res) => {
 
 //UPDATE a user's info, by username
 app.put('/users/:username', async (req, res) => {
-  await Users.findOneAndUpdate({username: req.params.username }, { $set:
-    {
-      username: req.body.username,
-      password: req.body.Password,
-      email: req.body.Email,
-      birthday: req.body.Birthday
+  try{
+    const{ username, password, email, birthday} = req.body;
+    const updatedUser = await Users.findOneAndUpdate(
+      {username: req.params.username},
+      {$set:
+        {
+          username: username,
+          email: email,
+          password: password,
+          birthday: birthday
+        }
+      },
+      {new: true}
+    );
+    if (!updatedUser) {
+      return res.status(404).send('User not found');
     }
-  },
-  {new:True})//This line makes sure that the updated document is returned
-  .then((updatedUser) => {
-    res.json(updatedUser);
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(500).send('Error:' + err);
-  })
-
+    res.status(200).json(updatedUser);// Send the updated user as the response
+  }catch (error) {
+    console.error(error);
+    res.status(500).send('Error updating user: ' + error.message); // More specific error message
+  }
 });
 
-//CREATE Add a movie to a user's list of favorites
+// CREATE Add a movie to a user's list of favorites
 app.post('/users/:username/movies/:MovieID', async (req, res) => {
-  await Users.findOneAndUpdate({username: req.params.Username }, {
-    $push: {favoriteMovies: req.params.MovieID}
-  },
-  {new:true})//This line makes sure that the updated document is returned
-  .then((updatedUser) => {
-    console.log(updatedUser);
-    res.json(updatedUser);
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(500).send('Error:' + err);
-  });
-  });
+  try {
+      const user = await Users.findOne({ username: req.params.username });
+
+      if (!user) {
+          return res.status(404).send('User not found');
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(req.params.MovieID)) {
+          return res.status(400).send('Invalid MovieID');
+      }
+
+      const movie = await Movies.findById(req.params.MovieID);
+
+      if (!movie) {
+          return res.status(404).send("Movie not found");
+      }
+
+      const updatedUser = await Users.findOneAndUpdate(
+          { username: req.params.username },
+          { $push: { favoriteMovies: req.params.MovieID } },
+          { new: true }
+      );
+
+      res.json(updatedUser);
+
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Error adding movie to favorites: ' + err.message);
+  }
+});
 
   //DELETE a user by username
   app.delete('/users/:username', async (req, res) => {
@@ -284,20 +303,38 @@ app.post('/users/:username/movies/:MovieID', async (req, res) => {
     });
   })
 
-  //DELETE a movie from a user's list of farorites
-  app.delete('/users/:username/movies/:MovieID', async (req, res) => {
-    await Users.findOneAndUpdate({username: req.params.Username}, {
-      $pull:{favoriteMovies: req.params.MovieID}
-    },
-    {new:true})//This line makes sure that the updated document is returned
-    .then((updatedUser) => {
+// DELETE a movie from a user's list of favorites
+app.delete('/users/:username/movies/:MovieID', async (req, res) => {
+  try {
+      const user = await Users.findOne({ username: req.params.username });
+
+      if (!user) {
+          return res.status(404).send('User not found');
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(req.params.MovieID)) {
+          return res.status(400).send('Invalid MovieID');
+      }
+
+      const movie = await Movies.findById(req.params.MovieID);
+
+      if (!movie) {
+          return res.status(404).send("Movie not found");
+      }
+
+      const updatedUser = await Users.findOneAndUpdate(
+          { username: req.params.username },
+          { $pull: { favoriteMovies: req.params.MovieID } },
+          { new: true }
+      );
+
       res.json(updatedUser);
-    })
-    .catch((err) => {
+
+  } catch (err) {
       console.error(err);
-      res.status(500).send('Error:' + err);
-    });
-  });
+      res.status(500).send('Error removing movie from favorites: ' + err.message);
+  }
+});
 
 app.use((err, req, res, next) => {
     console.error('Error:', err);
