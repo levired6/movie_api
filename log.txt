@@ -636,3 +636,4 @@
 ::1 - - [17/Mar/2025:19:59:32 +0000] "POST /users/Crazy%20Eyes/movies/67ca0d07071a5bbf98fa421e HTTP/1.1" 200 226 "-" "PostmanRuntime/7.43.2"
 ::1 - - [17/Mar/2025:20:02:45 +0000] "POST /users/Crazy%20Eyes/movies/67c9f67e071a5bbf98fa4217 HTTP/1.1" 200 253 "-" "PostmanRuntime/7.43.2"
 ::1 - - [17/Mar/2025:20:05:34 +0000] "DELETE /users/Crazy%20Eyes/movies/67ca0d07071a5bbf98fa421e HTTP/1.1" 200 226 "-" "PostmanRuntime/7.43.2"
+::1 - - [17/Mar/2025:20:17:39 +0000] "DELETE /users/Crazy%20Eyes HTTP/1.1" 200 23 "-" "PostmanRuntime/7.43.2"

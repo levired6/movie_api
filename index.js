@@ -287,21 +287,21 @@ app.post('/users/:username/movies/:MovieID', async (req, res) => {
   }
 });
 
-  //DELETE a user by username
-  app.delete('/users/:username', async (req, res) => {
-    await Users.findOneAndRemove({username: req.params.Username})
-    .then((user) => {
+// DELETE a user by username
+app.delete('/users/:username', async (req, res) => {
+  try {
+      const user = await Users.findOneAndDelete({ username: req.params.username });
+
       if (!user) {
-        res.status(400).send(req.params.username + ' was not found');
-      }else {
-        res.status(200).send(req.params.username + ' was deleted.');
+          return res.status(404).send(req.params.username + ' was not found'); // Changed to 404 for "Not Found"
+      } else {
+          return res.status(200).send(req.params.username + ' was deleted.');
       }
-    })
-    .catch((err) => {
+  } catch (err) {
       console.error(err);
-      res.status(500).send('Error:' + err);
-    });
-  })
+      return res.status(500).send('Error: ' + err.message); // Included err.message for more detail
+  }
+});
 
 // DELETE a movie from a user's list of favorites
 app.delete('/users/:username/movies/:MovieID', async (req, res) => {
