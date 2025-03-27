@@ -1,5 +1,4 @@
-const jwtSecret = 'your_jwt_secret'; // This has to be the same key used in the JWTStrategy
-
+const jwtSecret = process.env.JWT_SECRET; // This has to be the same key used in the JWTStrategy
 const jwt = require('jsonwebtoken'),
   passport = require('passport');
 
@@ -27,11 +26,11 @@ module.exports = (router) => {
       }
       req.login(user, { session: false }, (error) => {
         if (error) {
-          res.send(error);
+         return res.status(500).send(error);
         }
         let token = generateJWTToken(user.toJSON());
         return res.json({ user, token });
       });
     })(req, res);
   });
-}
+};

@@ -1,14 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
 const fs = require('fs');
 const uuid = require('uuid');
 const path = require('path');
-
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
+const cors = require('cors');
+const { check, validationResult } = require('express-validator');//Import express-validator
+
 mongoose.connect('mongodb://localhost:27017/cfdb');
 
 const app = express();
@@ -19,8 +20,7 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
-//app.use(bodyParser.json());
-
+app.use(cors());
 
 let auth = require('./auth')(app);//Imports the auth.js file to create the endpoint for login
 const passport =require('passport'); 
@@ -186,7 +186,18 @@ let users = [
   });
 
   // Add a user (Create)
-app.post('/users', async (req, res) => {
+app.post('/users',[//Validation middleware
+    check('username', 'Username is required').isLength({ min: 5 }),
+    check('username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('password', 'Password is required').not().isEmpty(),
+    check('email', 'Email does not appear to be valid').isEmail(),
+    check('birthday', 'Birthday is not valid').isISO8601().optional({ nullable: true }), // Optional birthday
+  ] async (req, res) => {
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
   try {
       const existingUser = await Users.findOne({ username: req.body.username });
 
@@ -194,9 +205,10 @@ app.post('/users', async (req, res) => {
           return res.status(400).send(req.body.username + ' already exists');
       }
 
+      const hashedPassword = Users.hashPassword(req.body.password);
       const newUser = await Users.create({
           username: req.body.username,
-          password: req.body.password, // Store hashed password
+          password: hashedPassword, // Store hashed password
           email: req.body.email,
           birthday: req.body.birthday
       });
@@ -234,21 +246,32 @@ app.get('/users/:username', passport.authenticate('jwt', { session: false }), as
 });
 
 //UPDATE a user's info, by username
-app.put('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.put('/users/:username', passport.authenticate('jwt', { session: false }), [ // Validation middleware
+  check('username', 'Username is required').isLength({ min: 5 }),
+  check('username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('password', 'Password is required').not().isEmpty(),
+  check('email', 'Email does not appear to be valid').isEmail(),
+  check('birthday', 'Birthday is not valid').isISO8601().optional({ nullable: true }), // Optional birthday
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
    // CONDITION TO CHECK ADDED HERE
-   if(req.user.Username !== req.params.Username){
+   if(req.user.username !== req.params.username){
     return res.status(400).send('Permission denied');
 }
 // CONDITION ENDS
   try{
     const{ username, password, email, birthday} = req.body;
+    const hashedPassword = Users.hashPassword(password);
     const updatedUser = await Users.findOneAndUpdate(
       {username: req.params.username},
       {$set:
         {
           username: username,
           email: email,
-          password: password,
+          password: hashedPassword,
           birthday: birthday
         }
       },
