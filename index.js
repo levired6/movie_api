@@ -192,7 +192,7 @@ app.post('/users',[//Validation middleware
     check('password', 'Password is required').not().isEmpty(),
     check('email', 'Email does not appear to be valid').isEmail(),
     check('birthday', 'Birthday is not valid').isISO8601().optional({ nullable: true }), // Optional birthday
-  ] async (req, res) => {
+  ], async (req, res) => {
     let errors = validationResult(req);
 
     if (!errors.isEmpty()) {
