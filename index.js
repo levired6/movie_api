@@ -10,7 +10,8 @@ const Users = Models.User;
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');//Import express-validator
 
-mongoose.connect('mongodb://localhost:27017/cfdb');
+//mongoose.connect('mongodb://localhost:27017/cfdb');{useNewUrlParser: true, useUnifiedTopology: true};//Connect to MongoDB database
+mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });//Connect to MongoDB database
 
 const app = express();
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
@@ -378,3 +379,4 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
  console.log('Listening on Port ' + port);
 });
+
