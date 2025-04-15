@@ -372,13 +372,12 @@ app.delete('/users/:username/movies/:MovieID', passport.authenticate('jwt', { se
   }
 });
 
-app.use((err, req, res, next) => {
+/*app.use((err, req, res, next) => {
     console.error('Error:', err);
     res.status(500).send('Something went wrong!');
 });
-
-
+*/
 const port = process.env.PORT || 8080;
-  app.listen(port, '0.0.0.0',() => {
+  app.listen(port, () => {
    console.log('Listening on Port ' + port);
   });
