@@ -4,12 +4,14 @@ const fs = require('fs');
 const uuid = require('uuid');
 const path = require('path');
 const mongoose = require('mongoose');
+console.log ('line 6')
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator');//Import express-validator
 
 //mongoose.connect('mongodb://localhost:27017/cfdb')//Connect to MongoDB database
+console.log(process.env.CONNECTION_URI)
 mongoose.connect( process.env.CONNECTION_URI)//Connect to MongoDB database
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.log('MongoDB Connection Error: ', err));
