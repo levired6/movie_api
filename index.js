@@ -9,8 +9,8 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator');//Import express-validator
 
-//mongoose.connect('mongodb://localhost:27017/cfdb');{useNewUrlParser: true, useUnifiedTopology: true};//Connect to MongoDB database
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true })//Connect to MongoDB database
+//mongoose.connect('mongodb://localhost:27017/cfdb')//Connect to MongoDB database
+mongoose.connect( process.env.CONNECTION_URI)//Connect to MongoDB database
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.log('MongoDB Connection Error: ', err));
 
@@ -287,10 +287,10 @@ app.delete('/users/:username/movies/:MovieID', passport.authenticate('jwt', { se
   }
 });
 
-/*app.use((err, req, res, next) => {
+app.use((err, req, res, next) => {
     console.error('Error:', err);
     res.status(500).send('Something went wrong!');
-});*/
+});
 
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
