@@ -2,6 +2,7 @@ const passport = require('passport'),
 LocalStrategy = require('passport-local').Strategy,
 Models = require('./models.js'),
 passportJWT = require('passport-jwt');
+const bcryptjs = require('bcryptjs');
 
 let Users = Models.User,
 JWTStrategy = passportJWT.Strategy,
