@@ -11,7 +11,7 @@ async function hashExistingPasswords() {
     process.exit(1); // Exit with an error code
   }
   try {
-    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(uri);
     console.log('Connected to MongoDB');
 
     const users = await User.find({});
