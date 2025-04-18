@@ -2,13 +2,12 @@ const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
 const { User } = require('./models');
 
-// MongoDB Atlas connection string for the 'test' database
 const uri = process.env.CONNECTION_URI;
 
 async function hashExistingPasswords() {
   if (!uri) {
     console.error('Error: CONNECTION_URI environment variable not set.');
-    process.exit(1); // Exit with an error code
+    process.exit(1);
   }
   try {
     await mongoose.connect(uri);
@@ -16,22 +15,26 @@ async function hashExistingPasswords() {
 
     const users = await User.find({});
     console.log(`Found ${users.length} users.`);
-
     for (const user of users) {
-      if (!user.password.startsWith('$2a$')) {
-        const hashedPassword = bcryptjs.hashSync(user.password, 10);
-        user.password = hashedPassword;
-        await user.save();
-        console.log(`Hashed password for user: ${user.username}`);
+      console.log('Retrieved user:', user); // Log the entire user object
+      if (user.username) {
+        try {
+          const hashedPassword = bcryptjs.hashSync(user.password, 10);
+          user.password = hashedPassword;
+          await user.save();
+          console.log(`Hashed password for user: ${user.username}`);
+        } catch (saveError) {
+          console.error(`Error saving user ${user.username}:`, saveError);
+        }
       } else {
-        console.log(`Password for user ${user.username} is already hashed.`);
+        console.warn('Warning: User found without username. Skipping.');
       }
     }
 
     console.log('Password hashing complete.');
     mongoose.disconnect();
   } catch (error) {
-    console.error('Error hashing passwords:', error);
+    console.error('Error connecting to MongoDB:', error);
     mongoose.disconnect();
   }
 }
