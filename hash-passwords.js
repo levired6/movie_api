@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
-const { User } = require('./models'); 
+const { User } = require('./models');
 
-//MongoDB Atlas connection string for the 'test' database
-const uri = 'CONNECTION_URI';
+// MongoDB Atlas connection string for the 'test' database
+const uri = process.env.CONNECTION_URI;
 
 async function hashExistingPasswords() {
+  if (!uri) {
+    console.error('Error: CONNECTION_URI environment variable not set.');
+    process.exit(1); // Exit with an error code
+  }
   try {
     await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log('Connected to MongoDB');
@@ -14,7 +18,7 @@ async function hashExistingPasswords() {
     console.log(`Found ${users.length} users.`);
 
     for (const user of users) {
-      if (!user.password.startsWith('$2a$')) { // Check if password is not already a bcrypt hash
+      if (!user.password.startsWith('$2a$')) {
         const hashedPassword = bcryptjs.hashSync(user.password, 10);
         user.password = hashedPassword;
         await user.save();
