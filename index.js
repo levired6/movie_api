@@ -226,6 +226,11 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
           return res.status(404).send("Movie not found");
       }
 
+      // Check if the movie is already in the user's favorites
+      if (user.favoriteMovies.includes(req.params.MovieID)) {
+        return res.status(400).send('This movie has already been added to your favorites.');
+    }
+    
       const updatedUser = await Users.findOneAndUpdate(
           { username: req.params.username },
           { $push: { favoriteMovies: req.params.MovieID } },
