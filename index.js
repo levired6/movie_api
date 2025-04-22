@@ -230,7 +230,7 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
       if (user.favoriteMovies.includes(req.params.MovieID)) {
         return res.status(400).send('This movie has already been added to your favorites.');
     }
-    
+
       const updatedUser = await Users.findOneAndUpdate(
           { username: req.params.username },
           { $push: { favoriteMovies: req.params.MovieID } },
@@ -248,6 +248,11 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
 // DELETE a user by username
 app.delete('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
+        // **ADDED THIS CHECK SO THAT YOU CANT DELETE OTHER USERS:**
+        if (req.user.username !== req.params.username) {
+          return res.status(403).send('Permission denied. You can only delete your own account.'); // 403 Forbidden
+        }
+        
       const user = await Users.findOneAndDelete({ username: req.params.username });
 
       if (!user) {
