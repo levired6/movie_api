@@ -279,21 +279,6 @@
         </li>
     </ul>
 
-    <h3>Add Multiple Movies to Favorites</h3>
-    <p>Adds multiple movies to a user's list of favorites. **Requires a valid JWT for authentication.**</p>
-    <ul>
-        <li><strong>URL:</strong> <code>/users/:username/movies</code></li>
-        <li><strong>Method:</strong> <code>POST</code></li>
-        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
-        <li><strong>Query Parameters:</strong> None</li>
-        <li><strong>Request Body:</strong> JSON array of MovieIDs to add. Example:
-            <pre>["movie-id-3", "movie-id-4"]</pre>
-        </li>
-        <li><strong>Response:</strong> JSON object containing the updated user's favorite movies. Example:
-            <pre>{"_id": "user-id", "username": "...", "favoriteMovies": ["movie-id-1", "movie-id-2", "movie-id-3", "movie-id-4"]}</pre>
-        </li>
-    </ul>
-
     <h3>Remove Movie from Favorites</h3>
     <p>Removes a movie from a user's list of favorites. **Requires a valid JWT for authentication.**</p>
     <ul>
