@@ -4,7 +4,6 @@ const fs = require('fs');
 const uuid = require('uuid');
 const path = require('path');
 const mongoose = require('mongoose');
-console.log ('line 6')
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
