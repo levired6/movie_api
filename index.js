@@ -4,7 +4,6 @@ const fs = require('fs');
 const uuid = require('uuid');
 const path = require('path');
 const mongoose = require('mongoose');
-console.log ('line 6')
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -36,7 +35,7 @@ app.get('/', (req, res) => {
   res.send(`Welcome to myFlix app! Here are the top 10 2025 Oscar nomonated movies!`);
 });
 
-const allowedOrigins = ['http://localhost:8080', 'https://oscars2025-f0070acec0c4.herokuapp.com/'];
+const allowedOrigins = ['http://localhost:8080', 'https://oscars2025-f0070acec0c4.herokuapp.com/', 'http://localhost:1234'];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -50,7 +49,7 @@ app.use(cors({
 }));
 
   //READ all movies
-  app.get('/movies', async (req, res) => {
+  app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find()
     .then((movies)=> {
       res.status(201).json(movies);
