@@ -1,121 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Movie api</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <h1>myFlix API Documentation</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myFlix API Documentation</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-        <p>Objective  
-            To  build  an "API" (Application Programming Interface)  server-side  component  of  a  “movies”  web  application. 
-            The  web application  will  provide  users  with  access  to  information  about  different  
-            movies,   directors,   and  genres.  Users  will  be  able  to  sign  up,   update  their  
-            personal  information,   and  create  a  list  of  their  favorite  movies.  </p>
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Request</th>
-                        <th>URL</th>
-                        <th>Response</th>
-                        <th>Description</th> <th>Query Parameters</th> <th>Request Body</th> <th>Response Body</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>GET</td>
-                        <td>/movies</td>
-                        <td>200 OK</td>
-                        <td>Returns a list of all movies</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON array of movie objects</td>
-                    </tr>
-                    <tr>
-                        <td>GET</td>
-                        <td>/movies/:title</td>
-                        <td>200 OK or 404 Not Found</td>
-                        <td>Returns data about a single movie by title</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON object of movie data</td>
-                    </tr>
-                    <tr>
-                        <td>GET</td>
-                        <td>/users</td>
-                        <td>200 OK</td>
-                        <td>Returns data on all the users</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON array of user objects</td>
-                    </tr>
-                    <tr>
-                        <td>GET</td>
-                        <td>/users/:id</td>
-                        <td>200 OK</td>
-                        <td>Returns data for a user by ID</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON object of user data</td>
-                    </tr>
-                    <tr>
-                        <td>POST</td>
-                        <td>/users</td>
-                        <td>201 Created</td>
-                        <td>Registers a new user</td>
-                        <td>None</td>
-                        <td>JSON object of user data</td>
-                        <td>JSON object of created user</td>
-                    </tr>
-                    <tr>
-                        <td>PUT</td>
-                        <td>/users/:id</td>
-                        <td>200 OK</td>
-                        <td>Updates user information</td>
-                        <td>None</td>
-                        <td>JSON object of updated user data</td>
-                        <td>JSON object of updated user data</td>
-                    </tr>
-                    <tr>
-                        <td>DELETE</td>
-                        <td>/users/:id</td>
-                        <td>200 OK</td>
-                        <td>Deletes a user</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>Success message</td>
-                    </tr>
-                    <tr>
-                        <td>POST</td>
-                        <td>/users/:id/favorites/:movieId</td>
-                        <td>201 Created</td>
-                        <td>Adds a movie to user's favorites</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>Success message</td>
-                    </tr>
-                    <tr>
-                        <td>GET</td>
-                        <td>/users/:id/favorites</td>
-                        <td>200 OK</td>
-                        <td>Returns user's favorite movies</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>JSON array of movie objects</td>
-                    </tr>
-                    <tr>
-                        <td>DELETE</td>
-                        <td>/users/:id/favorites/:movieId</td>
-                        <td>200 OK</td>
-                        <td>Removes a movie from user's favorites</td>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>Success message</td>
-                    </tr>
-                </tbody>
-            </table>
-    </body>
+        th {
+            background-color: #f2f2f2;
+        }
+        h3 {
+            margin-top: 1.5em;
+        }
+        .response-code {
+            font-weight: bold;
+            color: darkred;
+        }
+        .data-model-pre {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>myFlix API Documentation</h1>
+
+    <p>
+        Objective: To build an API (Application Programming Interface) server-side component of a “movies” web application.
+        The web application will provide users with access to information about different movies, directors, and genres.
+        Users will be able to sign up, update their personal information, and create a list of their favorite movies.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Request</th>
+                <th>URL</th>
+                <th>Description</th>
+                <th>Authentication</th>
+                <th>Request Body</th>
+                <th>Response</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td>/</td>
+                <td>Returns a welcome message</td>
+                <td>None</td>
+                <td>None</td>
+                <td>Text</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/movies</td>
+                <td>Returns a list of all movies</td>
+                <td>JWT</td>
+                <td>None</td>
+                <td>JSON array of movies</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/movies/:title</td>
+                <td>Returns data about a single movie by title</td>
+                <td>JWT</td>
+                <td>None</td>
+                <td>JSON object of a movie</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/movies/genres/:name</td>
+                <td>Returns data about a genre by name</td>
+                <td>JWT</td>
+                <td>None</td>
+                <td>JSON object of a genre</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/directors/:directorName</td>
+                <td>Returns data about a director by name</td>
+                <td>JWT</td>
+                <td>None</td>
+                <td>JSON object of a director</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/users</td>
+                <td>Registers a new user</td>
+                <td>None</td>
+                <td>JSON object (username, password, email, birthday)</td>
+                <td>JSON object of the new user</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/login</td>
+                <td>Logs in an existing user</td>
+                <td>None</td>
+                <td>JSON object (username, password)</td>
+                <td>JSON object (JWT token)</td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td>/users/:username</td>
+                <td>Updates user info</td>
+                <td>JWT</td>
+                <td>JSON object (updated user data)</td>
+                <td>JSON object of the updated user</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/users/:username/movies/:MovieID</td>
+                <td>Adds a movie to favorites</td>
+                <td>JWT</td>
+                <td>None</td>
+                <td>JSON object (updated user with favorites)</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/users/:username/movies</td>
+                <td>Adds multiple movies to favorites</td>
+                <td>JWT</td>
+                <td>JSON array of MovieIDs</td>
+                <td>JSON object (updated user with favorites)</td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/users/:username/movies/:MovieID</td>
+                <td>Removes a movie from favorites</td>
+                <td>JWT</td>
+                <td>None</td>
+                <td>JSON object (updated user with favorites)</td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/users/:username</td>
+                <td>Deregisters a user</td>
+                <td>JWT</td>
+                <td>None</td>
+                <td>Text</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Endpoint Details</h2>
+
+    <h3>Welcome Message</h3>
+    <p>Returns a welcome message.</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/</code></li>
+        <li><strong>Method:</strong> <code>GET</code></li>
+        <li><strong>Authentication:</strong> None</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> Text message. Example:
+            <pre>Welcome to myFlix app! Here are the top 10 2025 Oscar nominated movies!</pre>
+        </li>
+    </ul>
+
+    <h3>Get All Movies</h3>
+    <p>Returns a list of all movies. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/movies</code></li>
+        <li><strong>Method:</strong> <code>GET</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> JSON array of movie objects. Example:
+            <pre>[{"title": "Anora", "description": "...", "genre": {"name": "Comedy, Drama, Romance", "description": "..." }, "director": {"name": "Sean Baker", "bio": "...", "birthyear": "..." }, "actors": [], "imageURL": "images/Anora.jpg", "featured": false, "releaseYear": 2024, "rating": "..." }]</pre>
+        </li>
+    </ul>
+
+    <h3>Get Movie by Title</h3>
+    <p>Returns data about a single movie by title. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/movies/:title</code></li>
+        <li><strong>Method:</strong> <code>GET</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> JSON object of the movie data. Example:
+            <pre>{"title": "Anora", "description": "...", "genre": {"name": "Comedy, Drama, Romance", "description": "..." }, "director": {"name": "Sean Baker", "bio": "...", "birthyear": "..." }, "actors": [], "imageURL": "images/Anora.jpg", "featured": false, "releaseYear": 2024, "rating": "..." }</pre>
+        </li>
+    </ul>
+
+    <h3>Get Genre by Name</h3>
+    <p>Returns data about a genre by name. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/movies/genres/:name</code></li>
+        <li><strong>Method:</strong> <code>GET</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> JSON object of the genre data. Example:
+            <pre>{"name": "Comedy, Drama, Romance", "description": "..."}</pre>
+        </li>
+    </ul>
+
+    <h3>Get Director by Name</h3>
+    <p>Returns data about a director by name. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/directors/:directorName</code></li>
+        <li><strong>Method:</strong> <code>GET</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> JSON object of the director data. Example:
+            <pre>{"name": "Sean Baker", "bio": "...", "birthyear": "..."}</pre>
+        </li>
+    </ul>
+
+    <h3>Register New User</h3>
+    <p>Registers a new user.</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/users</code></li>
+        <li><strong>Method:</strong> <code>POST</code></li>
+        <li><strong>Authentication:</strong> None</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> JSON object with user data. Example:
+            <pre>{"username": "NewUser", "password": "password123", "email": "newuser@example.com", "birthday": "2000-01-01T00:00:00.000Z"}</pre>
+        </li>
+        <li><strong>Response:</strong> JSON object of the newly created user. Example:
+            <pre>{"username": "NewUser", "email": "newuser@example.com", "birthday": "2000-01-01T00:00:00.000Z", "favoriteMovies": [], "_id": "generated-id"}</pre>
+        </li>
+    </ul>
+
+    <h3>Login User</h3>
+    <p>Logs in an existing user and returns a JSON Web Token (JWT) for authentication.</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/login</code></li>
+        <li><strong>Method:</strong> <code>POST</code></li>
+        <li><strong>Authentication:</strong> None</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> JSON object with the user's login credentials. Example:
+            <pre>{"username": "ExistingUser", "password": "userpassword"}</pre>
+        </li>
+        <li><strong>Response:</strong> JSON object containing the JWT. This token needs to be included in the 'Authorization' header (as a Bearer token) for accessing protected endpoints. Example:
+            <pre>{"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkV4aXN0aW5nVXNlciIsImlhdCI6MTY4MTc3MjAwMCwiZXhwIjoxNjgxNzcwMDAwfQ.example_jwt_token"}</pre>
+        </li>
+    </ul>
+
+    <h3>Update User Info</h3>
+    <p>Updates user information. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/users/:username</code></li>
+        <li><strong>Method:</strong> <code>PUT</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> JSON object with updated user data. Example:
+            <pre>{"username": "UpdatedUser", "password": "newpassword", "email": "updated@example.com", "birthday": "2001-01-01T00:00:00.000Z"}</pre>
+        </li>
+        <li><strong>Response:</strong> JSON object of the updated user data. Example:
+            <pre>{"username": "UpdatedUser", "email": "updated@example.com", "birthday": "2001-01-01T00:00:00.000Z", "favoriteMovies": [], "_id": "generated-id"}</pre>
+        </li>
+    </ul>
+
+    <h3>Add Movie to Favorites</h3>
+    <p>Adds a movie to a user's list of favorites. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/users/:username/movies/:MovieID</code></li>
+        <li><strong>Method:</strong> <code>POST</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> JSON object containing the updated user's favorite movies. Example:
+            <pre>{"_id": "user-id", "username": "...", "favoriteMovies": ["movie-id-1", "movie-id-2", "added-movie-id"]}</pre>
+        </li>
+    </ul>
+
+    <h3>Remove Movie from Favorites</h3>
+    <p>Removes a movie from a user's list of favorites. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/users/:username/movies/:MovieID</code></li>
+        <li><strong>Method:</strong> <code>DELETE</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> JSON object containing the updated user's favorite movies. Example:
+            <pre>{"_id": "user-id", "username": "...", "favoriteMovies": ["movie-id-1"]}</pre>
+        </li>
+    </ul>
+
+    <h3>Deregister User</h3>
+    <p>Deregisters (deletes) a user. **Requires a valid JWT for authentication.**</p>
+    <ul>
+        <li><strong>URL:</strong> <code>/users/:username</code></li>
+        <li><strong>Method:</strong> <code>DELETE</code></li>
+        <li><strong>Authentication:</strong> Requires JWT (Bearer token)</li>
+        <li><strong>Query Parameters:</strong> None</li>
+        <li><strong>Request Body:</strong> None</li>
+        <li><strong>Response:</strong> Text message indicating success (e.g., "User [username] has been successfully deregistered.") or failure.</li>
+    </ul>
+
+    <h2>Error Responses</h2>
+    <p>The API may return the following error status codes in case of issues:</p>
+    <ul>
+        <li><span class="response-code">400 Bad Request</span>: The request was malformed or contained invalid data. Check the request body and parameters.</li>
+        <li><span class="response-code">401 Unauthorized</span>: Authentication failed due to missing or invalid JWT. Ensure you are providing a valid Bearer token in the 'Authorization' header.</li>
+        <li><span class="response-code">404 Not Found</span>: The requested resource (e.g., movie, user) could not be found on the server. Check the URL and parameters.</li>
+        <li><span class="response-code">500 Internal Server Error</span>: An unexpected error occurred on the server. This could be due to database issues or other server-side problems. Check the server logs for more details.</li>
+    </ul>
+
+    <h2>Data Models</h2>
+    <p>Below are the structures of the JSON objects exchanged by the API:</p>
+
+    <h3>Movie Object</h3>
+    <pre class="data-model-pre">{
+  "_id": "string (ObjectId)",
+  "title": "string (required)",
+  "description": "string (required)",
+  "genre": {
+    "name": "string (required)",
+    "description": "string (required)"
+  },
+  "director": {
+    "name": "string (required)",
+    "bio": "string",
+    "birthyear": "number"
+  },
+  "actors": "array of strings",
+  "imageURL": "string (URL to the movie poster)",
+  "featured": "boolean",
+  "releaseYear": "number",
+  "rating": "string"
+}</pre>
+
+    <h3>Genre Object</h3>
+    <pre class="data-model-pre">{
+  "name": "string (required)",
+  "description": "string (required)"
+}</pre>
+
+    <h3>Director Object</h3>
+    <pre class="data-model-pre">{
+  "name": "string (required)",
+  "bio": "string",
+  "birthyear": "number"
+}</pre>
+
+    <h3>User Object</h3>
+    <pre class="data-model-pre">{
+  "_id": "string (ObjectId)",
+  "username": "string (required, unique)",
+  "password": "string (required, hashed)",
+  "email": "string (required, valid format)",
+  "birthday": "string (ISO 8601 format, e.g., '2000-01-01T00:00:00.000Z')",
+  "favoriteMovies": "array of strings (Movie ObjectIds)",
+  "__v": "number (version key)"
+}</pre>
+
+</body>
 </html>
