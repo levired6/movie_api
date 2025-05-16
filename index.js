@@ -24,11 +24,6 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
-const cors = require('cors');
-let auth = require('./auth')//Imports the auth.js file to create the endpoint for login
-const appRouter = express.Router();
-auth(appRouter);
-app.use('/', appRouter);
 const passport =require('passport'); 
 require('./passport');//Passport module to import the passport.js file into the project
 
@@ -38,6 +33,7 @@ app.get('/', (req, res) => {
 });
 
 
+const cors = require('cors');
 const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com/', 'http://localhost:8080'];
  
 
@@ -56,6 +52,11 @@ app.use(cors({
 }));
 
 app.options('*', cors()); // Enable pre-flight for all routes
+
+let auth = require('./auth')//Imports the auth.js file to create the endpoint for login
+const appRouter = express.Router();
+auth(appRouter);
+app.use('/', appRouter);
 
   //READ all movies
   app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
