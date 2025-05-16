@@ -25,8 +25,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
 const cors = require('cors');
-app.use(cors());
-let auth = require('./auth')(app);//Imports the auth.js file to create the endpoint for login
+let auth = require('./auth')//Imports the auth.js file to create the endpoint for login
+const appRouter = express.Router();
+auth(appRouter);
+app.use('/', appRouter);
 const passport =require('passport'); 
 require('./passport');//Passport module to import the passport.js file into the project
 
@@ -35,21 +37,28 @@ app.get('/', (req, res) => {
   res.send(`Welcome to myFlix app! Here are the top 10 2025 Oscar nomonated movies!`);
 });
 
-const allowedOrigins = ['http://localhost:8080', 'https://oscars2025-f0070acec0c4.herokuapp.com/', 'http://localhost:1234'];
+
+const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com/', 'http://localhost:8080'];
+ 
 
 app.use(cors({
   origin: (origin, callback) => {
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
-      let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-      return callback(new Error(message ), false);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      const message = 'The CORS policy for this application does not allow access from origin ' + origin;
+      return callback(new Error(message), false);
     }
-    return callback(null, true);
-  }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: true,
 }));
 
+app.options('*', cors()); // Enable pre-flight for all routes
+
   //READ all movies
-  app.get('/movies', async (req, res) => {
+  app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find()
     .then((movies)=> {
       res.status(201).json(movies);
