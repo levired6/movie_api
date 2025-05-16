@@ -25,7 +25,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
 const cors = require('cors');
-let auth = require('./auth')(app);//Imports the auth.js file to create the endpoint for login
+let auth = require('./auth')//Imports the auth.js file to create the endpoint for login
+const appRouter = express.Router();
+auth(appRouter);
+app.use('/', appRouter);
 const passport =require('passport'); 
 require('./passport');//Passport module to import the passport.js file into the project
 
