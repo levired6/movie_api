@@ -37,7 +37,9 @@ app.get('/', (req, res) => {
   res.send(`Welcome to myFlix app! Here are the top 10 2025 Oscar nomonated movies!`);
 });
 
+
 const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com/', 'http://localhost:8080'];
+ 
 
 app.use(cors({
   origin: (origin, callback) => {
