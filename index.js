@@ -38,13 +38,11 @@ app.get('/', (req, res) => {
 });
 
 
-const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com', 'http://localhost:8080']; // Removed trailing slash from Heroku URL
+const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com/', 'http://localhost:8080']; // Removed trailing slash from Heroku URL
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       const message = 'The CORS policy for this application does not allow access from origin ' + origin;
