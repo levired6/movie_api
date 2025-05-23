@@ -70,16 +70,26 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
     });
 });
 
-// READ a movie by title
-app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  await Movies.findOne({ title: req.params.title })
-    .then((movie) => {
-      res.json(movie);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error:' + err);
-    });
+// READ a movie by MovieID (UPDATED)
+app.get('/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    // Check if the provided movieId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.movieId)) {
+      return res.status(400).send('Invalid Movie ID format.');
+    }
+    const movie = await Movies.findById(req.params.movieId); // Use findById to search by _id
+    if (!movie) {
+      return res.status(404).send('Movie not found.'); // Send 404 if no movie is found with that ID
+    }
+    res.status(200).json(movie); // Return the movie data
+  } catch (err) {
+    console.error(err);
+    // Specifically catch CastError if mongoose.Types.ObjectId.isValid somehow misses something
+    if (err.name === 'CastError' && err.path === '_id') {
+      return res.status(400).send('Invalid Movie ID format.');
+    }
+    res.status(500).send('Error:' + err);
+  }
 });
 
 // READ a genre by name
