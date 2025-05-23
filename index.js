@@ -8,6 +8,7 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator');
+const cors = require('cors');
 
 // mongoose.connect('mongodb://localhost:27017/cfdb') // Connect to MongoDB database
 console.log(process.env.CONNECTION_URI);
@@ -24,22 +25,10 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const cors = require('cors');
-let auth = require('./auth'); // Imports the auth.js file to create the endpoint for login
-const appRouter = express.Router();
-auth(appRouter);
-app.use('/', appRouter);
-const passport = require('passport');
-require('./passport'); // Passport module to import the passport.js file into the project
-
-// sends response for root endpoint.
-app.get('/', (req, res) => {
-  res.send(`Welcome to myFlix app! Here are the top 10 2025 Oscar nominated movies!`);
-});
-
-
+// Define allowed origins for CORS
 const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com', 'http://localhost:8080']; // Removed trailing slash from Heroku URL
 
+// Enable CORS for all routes and origins
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -54,7 +43,20 @@ app.use(cors({
   credentials: true,
 }));
 
-app.options('*', cors()); // Enable pre-flight for all routes
+// Enable pre-flight for all routes
+app.options('*', cors());
+
+let auth = require('./auth'); // Imports the auth.js file to create the endpoint for login
+const appRouter = express.Router();
+auth(appRouter);
+app.use('/', appRouter);
+const passport = require('passport');
+require('./passport'); // Passport module to import the passport.js file into the project
+
+// sends response for root endpoint.
+app.get('/', (req, res) => {
+  res.send(`Welcome to myFlix app! Here are the top 10 2025 Oscar nominated movies!`);
+});
 
 // READ all movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
