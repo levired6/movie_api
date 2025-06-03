@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Define allowed origins for CORS
-const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com', 'http://localhost:8080']; // Removed trailing slash from Heroku URL
+const allowedOrigins = ['http://localhost:1234', 'https://oscars2025-f0070acec0c4.herokuapp.com', 'http://localhost:8080', 'https://oscars2025.netlify.app']; // Removed trailing slash from Heroku URL
 
 // Enable CORS for all routes and origins
 app.use(cors({
