@@ -44,7 +44,7 @@ app.use(cors({
 }));
 
 // Enable pre-flight for all routes
-app.options('*', cors());
+//app.options('*', cors());
 
 let auth = require('./auth'); // Imports the auth.js file to create the endpoint for login
 const appRouter = express.Router();
