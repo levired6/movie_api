@@ -25,7 +25,11 @@ let userSchema= mongoose.Schema({
     password: {type: String, required: true},
     email: {type: String, required: true},
     birthday: {type: Date, defualt: null},
-    favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie'}],
+    favoriteMovies: [{ // Changed to an array of objects
+        _id: false, // Prevents default _id creation for subdocuments
+        movieId: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }, // Reference to the Movie model
+        comment: { type: String, default: '' } // New field for the user's comment
+    }],
 });
 
 userSchema.statics.hashPassword = (password) => {
