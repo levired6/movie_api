@@ -279,13 +279,6 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
         return res.status(400).send('Invalid Movie ID format.');
     }
 
-    // Optional: Validate comment length if needed, e.g., using express-validator
-    // check('comment', 'Comment must be a string and less than 500 characters').isString().isLength({ max: 500 }).optional();
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //     return res.status(422).json({ errors: errors.array() });
-    // }
-
     const { comment } = req.body; // Extract comment from request body
 
     const user = await Users.findOne({ username: req.params.username });
@@ -301,8 +294,10 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
     }
 
     // Check if the movie is already in the user's favorites
-    // Check if any object in favoriteMovies array contains this movieId
-    const isAlreadyFavorite = user.favoriteMovies.some(fav => fav.movieId.toString() === req.params.MovieID);
+    // Corrected logic to safely access _id from populated movie object
+    const isAlreadyFavorite = user.favoriteMovies.some(fav => 
+        fav.movieId && (fav.movieId._id.toString() === req.params.MovieID)
+    );
     if (isAlreadyFavorite) {
       return res.status(400).send('This movie has already been added to your favorites.');
     }
