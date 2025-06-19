@@ -66,7 +66,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Error:' + err);
+      res.status(500).json({ message: 'Error: ' + err.message || 'An unexpected error occurred.' }); // Corrected to JSON
     });
 });
 
@@ -88,7 +88,7 @@ app.get('/movies/:movieId', passport.authenticate('jwt', { session: false }), as
     if (err.name === 'CastError' && err.path === '_id') {
       return res.status(400).send('Invalid Movie ID format.');
     }
-    res.status(500).send('Error:' + err);
+    res.status(500).json({ message: 'Error: ' + err.message || 'An unexpected error occurred.' }); // Corrected to JSON
   }
 });
 
@@ -104,7 +104,7 @@ app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false })
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Error:' + err);
+      res.status(500).json({ message: 'Error: ' + err.message || 'An unexpected error occurred.' }); // Corrected to JSON
     });
 });
 
@@ -120,7 +120,7 @@ app.get('/directors/:directorName', passport.authenticate('jwt', { session: fals
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Error:' + err);
+      res.status(500).json({ message: 'Error: ' + err.message || 'An unexpected error occurred.' }); // Corrected to JSON
     });
 });
 
@@ -156,7 +156,7 @@ app.post('/users', [ // Validation middleware
 
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error creating user: ' + (error.message || 'An unexpected error occurred.')); // Improved error message
+    res.status(500).json({ message: 'Error creating user: ' + (error.message || 'An unexpected error occurred.') }); // Corrected to JSON
   }
 });
 
@@ -168,7 +168,7 @@ app.get('/users', passport.authenticate('jwt', { session: false }), async (req, 
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Error:' + err);
+      res.status(500).json({ message: 'Error: ' + err.message || 'An unexpected error occurred.' }); // Corrected to JSON
     });
 });
 
@@ -192,7 +192,7 @@ app.get('/users/:username', passport.authenticate('jwt', { session: false }), as
     res.json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error:' + err);
+    res.status(500).json({ message: 'Error: ' + err.message || 'An unexpected error occurred.' }); // Corrected to JSON
   }
 });
 
@@ -261,7 +261,7 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [ 
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error updating user: ' + (error.message || 'An unexpected error occurred.')); // Improved error message
+    res.status(500).json({ message: 'Error updating user: ' + (error.message || 'An unexpected error occurred.') }); // Corrected to JSON
   }
 });
 
@@ -317,7 +317,7 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
 
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error adding movie to favorites: ' + (err.message || 'An unexpected error occurred.'));
+    res.status(500).json({ message: 'Error adding movie to favorites: ' + (err.message || 'An unexpected error occurred.') }); // Corrected to JSON
   }
 });
 
@@ -338,7 +338,7 @@ app.delete('/users/:username', passport.authenticate('jwt', { session: false }),
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send('Error: ' + (err.message || 'An unexpected error occurred.')); // Included err.message for more detail
+    return res.status(500).json({ message: 'Error: ' + (err.message || 'An unexpected error occurred.') }); // Corrected to JSON
   }
 });
 
@@ -381,13 +381,13 @@ app.delete('/users/:username/movies/:MovieID', passport.authenticate('jwt', { se
 
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error removing movie from favorites: ' + (err.message || 'An unexpected error occurred.'));
+    res.status(500).json({ message: 'Error removing movie from favorites: ' + (err.message || 'An unexpected error occurred.') }); // Corrected to JSON
   }
 });
 
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(500).send('Something went wrong!');
+  res.status(500).json({ message: 'Something went wrong!' }); // Corrected to JSON
 });
 
 const port = process.env.PORT || 8080;
