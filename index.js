@@ -75,18 +75,18 @@ app.get('/movies/:movieId', passport.authenticate('jwt', { session: false }), as
   try {
     // Check if the provided movieId is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(req.params.movieId)) {
-      return res.status(400).send('Invalid Movie ID format.');
+      return res.status(400).json({ message: 'Invalid Movie ID format.' }); // Corrected to JSON
     }
     const movie = await Movies.findById(req.params.movieId); // Use findById to search by _id
     if (!movie) {
-      return res.status(404).send('Movie not found.'); // Send 404 if no movie is found with that ID
+      return res.status(404).json({ message: 'Movie not found.' }); // Corrected to JSON
     }
     res.status(200).json(movie); // Return the movie data
   } catch (err) {
     console.error(err);
     // Specifically catch CastError if mongoose.Types.ObjectId.isValid somehow misses something
     if (err.name === 'CastError' && err.path === '_id') {
-      return res.status(400).send('Invalid Movie ID format.');
+      return res.status(400).json({ message: 'Invalid Movie ID format.' }); // Corrected to JSON
     }
     res.status(500).json({ message: 'Error: ' + err.message || 'An unexpected error occurred.' }); // Corrected to JSON
   }
@@ -99,7 +99,7 @@ app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false })
       if (movie && movie.genre) { // Check if movie and genre exist
         res.json(movie.genre);
       } else {
-        res.status(404).send('Genre not found'); // handle case where genre is not found
+        res.status(404).json({ message: 'Genre not found' }); // Corrected to JSON
       }
     })
     .catch((err) => {
@@ -115,7 +115,7 @@ app.get('/directors/:directorName', passport.authenticate('jwt', { session: fals
       if (movie && movie.director) { // Check if movie and director exist
         res.json(movie.director);
       } else {
-        res.status(404).send('Director not found'); // handle case where director is not found
+        res.status(404).json({ message: 'Director not found' }); // Corrected to JSON
       }
     })
     .catch((err) => {
@@ -141,7 +141,7 @@ app.post('/users', [ // Validation middleware
     const existingUser = await Users.findOne({ username: req.body.username });
 
     if (existingUser) {
-      return res.status(400).send(req.body.username + ' already exists');
+      return res.status(400).json({ message: req.body.username + ' already exists' }); // Corrected to JSON
     }
 
     const hashedPassword = Users.hashPassword(req.body.password);
@@ -181,12 +181,12 @@ app.get('/users/:username', passport.authenticate('jwt', { session: false }), as
       .populate('favoriteMovies.movieId'); // Populate the movieId field within favoriteMovies
 
     if (!user) {
-      return res.status(404).send('User not found.');
+      return res.status(404).json({ message: 'User not found.' }); // Corrected to JSON
     }
 
     // Permission check: Ensure authenticated user is requesting their own profile
     if (req.user.username !== req.params.username) {
-      return res.status(403).send('Permission denied: You can only view your own profile.');
+      return res.status(403).json({ message: 'Permission denied: You can only view your own profile.' }); // Corrected to JSON
     }
 
     res.json(user);
@@ -218,14 +218,14 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [ 
 
   // Permission check: Ensure authenticated user is updating their own profile
   if (req.user.username !== req.params.username) {
-    return res.status(403).send('Permission denied: You can only update your own account.'); // 403 Forbidden
+    return res.status(403).json({ message: 'Permission denied: You can only update your own account.' }); // Corrected to JSON
   }
 
   // Handle username change: Ensure new username is not already taken
   if (req.body.username && req.body.username !== req.params.username) {
     const existingUser = await Users.findOne({ username: req.body.username });
     if (existingUser) {
-      return res.status(400).send('Username already exists. Please choose a different username.');
+      return res.status(400).json({ message: 'Username already exists. Please choose a different username.' }); // Corrected to JSON
     }
   }
 
@@ -255,7 +255,7 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [ 
     );
 
     if (!updatedUser) {
-      return res.status(404).send('User not found.');
+      return res.status(404).json({ message: 'User not found.' }); // Corrected to JSON
     }
 
     res.status(200).json(updatedUser);
@@ -271,12 +271,12 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
   try {
     // Permission check: Ensure authenticated user is modifying their own favorites
     if (req.user.username !== req.params.username) {
-      return res.status(403).send('Permission denied: You can only modify your own favorites.');
+      return res.status(403).json({ message: 'Permission denied: You can only modify your own favorites.' }); // Corrected to JSON
     }
 
     // Validate if MovieID is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(req.params.MovieID)) {
-        return res.status(400).send('Invalid Movie ID format.');
+        return res.status(400).json({ message: 'Invalid Movie ID format.' }); // Corrected to JSON
     }
 
     const { comment } = req.body; // Extract comment from request body
@@ -284,13 +284,13 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
     const user = await Users.findOne({ username: req.params.username });
 
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(404).json({ message: 'User not found' }); // Corrected to JSON
     }
 
     const movie = await Movies.findById(req.params.MovieID);
 
     if (!movie) {
-      return res.status(404).send("Movie not found");
+      return res.status(404).json({ message: 'Movie not found' }); // Corrected to JSON
     }
 
     // Check if the movie is already in the user's favorites
@@ -299,7 +299,7 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
         fav.movieId && (fav.movieId._id.toString() === req.params.MovieID)
     );
     if (isAlreadyFavorite) {
-      return res.status(400).send('This movie has already been added to your favorites.');
+      return res.status(400).json({ message: 'This movie has already been added to your favorites.' }); // Corrected to JSON
     }
 
     const updatedUser = await Users.findOneAndUpdate(
@@ -321,15 +321,15 @@ app.delete('/users/:username', passport.authenticate('jwt', { session: false }),
   try {
     // **CRITICAL: Ensure authenticated user is deleting their own account**
     if (req.user.username !== req.params.username) {
-      return res.status(403).send('Permission denied. You can only delete your own account.'); // 403 Forbidden
+      return res.status(403).json({ message: 'Permission denied. You can only delete your own account.' }); // Corrected to JSON
     }
 
     const user = await Users.findOneAndDelete({ username: req.params.username });
 
     if (!user) {
-      return res.status(404).send(req.params.username + ' was not found'); // Changed to 404 for "Not Found"
+      return res.status(404).json({ message: req.params.username + ' was not found' }); // Corrected to JSON
     } else {
-      return res.status(200).send(req.params.username + ' was deleted.');
+      return res.status(200).json({ message: req.params.username + ' was deleted.' }); // Corrected to JSON
     }
   } catch (err) {
     console.error(err);
@@ -343,18 +343,18 @@ app.delete('/users/:username/movies/:MovieID', passport.authenticate('jwt', { se
   try {
     // Permission check: Ensure authenticated user is modifying their own favorites
     if (req.user.username !== req.params.username) {
-      return res.status(403).send('Permission denied: You can only modify your own favorites.');
+      return res.status(403).json({ message: 'Permission denied: You can only modify your own favorites.' }); // Corrected to JSON
     }
 
     // Validate if MovieID is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(req.params.MovieID)) {
-        return res.status(400).send('Invalid Movie ID format.');
+        return res.status(400).json({ message: 'Invalid Movie ID format.' }); // Corrected to JSON
     }
 
     const user = await Users.findOne({ username: req.params.username });
 
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(404).json({ message: 'User not found' }); // Corrected to JSON
     }
 
     // The movie doesn't need to exist as a standalone entry in the database
@@ -363,7 +363,7 @@ app.delete('/users/:username/movies/:MovieID', passport.authenticate('jwt', { se
     // you could fetch it like this (but not strictly necessary for deletion from user's list)
     // const movie = await Movies.findById(req.params.MovieID);
     // if (!movie) {
-    //   return res.status(404).send("Movie not found");
+    //   return res.status(404).json({ message: "Movie not found" });
     // }
 
     const updatedUser = await Users.findOneAndUpdate(
